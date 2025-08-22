@@ -1,0 +1,505 @@
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">
+            <span class="d-block d-lg-none">Clarence Taylor</span>
+            <span class="d-none d-lg-block"><img class="img-fluid img-profile rounded-circle mx-auto mb-2"
+                    src="assets/assets/img/logo.jpg" alt="..." /></span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#propietarios"> Propietarios</a>
+                </li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#mascotas"> Mascotas</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#citas"> Citas</a></li>
+
+
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- PROPIETARIOS-->
+    <!-- Page Content-->
+    <div class="container-fluid p-0">
+        <section class="resume-section" id="propietarios">
+            <div class="resume-section-content">
+                <h2 class="mb-5 text-center" style="color:#d35400;">Registro de Propietarios</h2>
+
+                <!-- FORMULARIO ESTILIZADO -->
+                <div class="card shadow-sm mb-5" style="border-color:#e67e22;">
+                    <div class="card-header" style="background-color:#e67e22; color:white;">
+                        <h4 class="mb-0">Agregar Nuevo Propietario</h4>
+                    </div>
+                    <div class="card-body">
+                        <form #propForm="ngForm" (ngSubmit)="crearPropietario(propForm)">
+                            <div *ngIf="mostrarAdvertencia" class="alert alert-warning mt-2">
+                                Todos los campos deben ser llenados
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Nombre</label>
+                                    <input type="text" class="form-control form-control-lg border-warning"
+                                        placeholder="Nombre" required [(ngModel)]="nuevoPropietario.nombre"
+                                        name="nombre">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Apellido Paterno</label>
+                                    <input type="text" class="form-control form-control-lg border-warning"
+                                        placeholder="Apellido Paterno" required
+                                        [(ngModel)]="nuevoPropietario.apellido_p" name="apellido_p">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Apellido Materno</label>
+                                    <input type="text" class="form-control form-control-lg border-warning"
+                                        placeholder="Apellido Materno" required
+                                        [(ngModel)]="nuevoPropietario.apellido_m" name="apellido_m">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Dirección</label>
+                                    <input type="text" class="form-control form-control-lg border-warning"
+                                        placeholder="Dirección" required [(ngModel)]="nuevoPropietario.direccion"
+                                        name="direccion">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Teléfono</label>
+                                    <input type="number" class="form-control form-control-lg border-warning"
+                                        placeholder="Teléfono" required [(ngModel)]="nuevoPropietario.telefono"
+                                        name="telefono">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">CI</label>
+                                    <input type="number" class="form-control form-control-lg border-warning"
+                                        placeholder="CI" required [(ngModel)]="nuevoPropietario.ci" name="ci">
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn"
+                                    style="background-color:#d35400; color:white; font-weight:bold; width:200px;">
+                                    Registrar
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABLA DE PROPIETARIOS -->
+                <div class="table-responsive">
+                    <table class="table align-middle shadow-sm" style="border:2px solid #e67e22;">
+                        <thead style="background-color:#e67e22; color:white;">
+                            <tr>
+                                <th>Nombre Completo</th>
+                                <th>CI</th>
+                                <th>Dirección</th>
+                                <th>Teléfono</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let p of propietarios" style="background-color:#fdf2e9;">
+                                <td>{{ p.nombre }} {{ p.apellido_p }} {{ p.apellido_m }}</td>
+                                <td>{{ p.ci }}</td>
+                                <td>{{ p.direccion }}</td>
+                                <td>{{ p.telefono }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm me-2" style="background-color:#f39c12; color:white;"
+                                        (click)="editarPropietario(p)">Editar</button>
+                                    <button class="btn btn-sm" style="background-color:#e74c3c; color:white;"
+                                        (click)="eliminarPropietario(p.id_propietario)">Eliminar</button>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+
+
+        <!-- Modal de edición de propietario FORMULARIO FLOTANTE-->
+        <div *ngIf="propietarioEditando" class="modal-backdrop">
+            <div class="modal-content">
+                <h3>Editar Propietario</h3>
+                <form (ngSubmit)="actualizarPropietario()">
+                    <div class="mb-3">
+                        <label>Nombre</label>
+                        <input type="text" class="form-control" [(ngModel)]="propietarioEditando.nombre" name="nombre"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Apellido Paterno</label>
+                        <input type="text" class="form-control" [(ngModel)]="propietarioEditando.apellido_p"
+                            name="apellido_p" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Apellido Materno</label>
+                        <input type="text" class="form-control" [(ngModel)]="propietarioEditando.apellido_m"
+                            name="apellido_m" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>CI</label>
+                        <input type="number" class="form-control" [(ngModel)]="propietarioEditando.ci" name="ci"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Teléfono</label>
+                        <input type="number" class="form-control" [(ngModel)]="propietarioEditando.telefono"
+                            name="telefono" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Dirección</label>
+                        <input type="text" class="form-control" [(ngModel)]="propietarioEditando.direccion"
+                            name="direccion" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary me-2"
+                        style="background-color:#f39c12; color:white;">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" (click)="cancelarEdicion()">Cancelar</button>
+                </form>
+            </div>
+        </div>
+        <!-- Modal de edición de propietario FORMULARIO FLOTANTE-->
+
+        <!-- FIN PROPIETARIOS-->
+
+        <!-- MASCOTAS -->
+        <section class="resume-section" id="mascotas">
+            <div class="resume-section-content">
+                <h2 class="mb-5 text-center" style="color:#d35400;">Registro de Mascotas</h2>
+
+                <!-- FORMULARIO ESTILIZADO -->
+                <div class="card shadow-sm mb-5" style="border-color:#e67e22;">
+                    <div class="card-header" style="background-color:#e67e22; color:white;">
+                        <h4 class="mb-0">Agregar Nueva Mascota</h4>
+                    </div>
+                    <div class="card-body">
+                        <form #mascForm="ngForm" (ngSubmit)="crearMascota(mascForm)">
+                            <!-- Mensaje de advertencia -->
+                            <div *ngIf="mostrarAdvertenciaMascota" class="alert alert-warning mt-2">
+                                Todos los campos deben ser llenados
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Nombre</label>
+                                    <input type="text" class="form-control form-control-lg border-warning"
+                                        placeholder="Nombre" required [(ngModel)]="nuevaMascota.nom_mascota"
+                                        name="nom_mascota">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Raza</label>
+                                    <input type="text" class="form-control form-control-lg border-warning"
+                                        placeholder="Raza" required [(ngModel)]="nuevaMascota.raza" name="raza">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Edad</label>
+                                    <input type="number" class="form-control form-control-lg border-warning"
+                                        placeholder="Edad" required [(ngModel)]="nuevaMascota.edad" name="edad">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Color</label>
+                                    <input type="text" class="form-control form-control-lg border-warning"
+                                        placeholder="Color" required [(ngModel)]="nuevaMascota.color" name="color">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Propietario</label>
+                                    <select class="form-select form-control-lg border-warning" required
+                                        [(ngModel)]="nuevaMascota.id_propietario" name="id_propietario">
+                                        <option value="" disabled selected>Seleccione un propietario</option>
+                                        <option *ngFor="let p of propietarios" [value]="p.id_propietario">
+                                            {{ p.nombre }} {{ p.apellido_p }} {{ p.apellido_m }} - CI: {{ p.ci }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn"
+                                    style="background-color:#d35400; color:white; font-weight:bold; width:200px;">
+                                    Registrar
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+
+                <!-- TABLA DE MASCOTAS -->
+                <div class="table-responsive">
+                    <table class="table align-middle shadow-sm" style="border:2px solid #e67e22;">
+                        <thead style="background-color:#e67e22; color:white;">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Raza</th>
+                                <th>Edad</th>
+                                <th>Color</th>
+                                <th>Propietario</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let m of mascotas" style="background-color:#fdf2e9;">
+                                <td>{{ m.nom_mascota }}</td>
+                                <td>{{ m.raza }}</td>
+                                <td>{{ m.edad }}</td>
+                                <td>{{ m.color }}</td>
+                                <td>{{ m.nombrePropietario }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm me-2" style="background-color:#f39c12; color:white;"
+                                        (click)="editarMascota(m)">Editar</button>
+                                    <button class="btn btn-sm" style="background-color:#e74c3c; color:white;"
+                                        (click)="eliminarMascota(m.id_mascota)">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal de edición de mascota -->
+                <div *ngIf="mascotaEditando" class="modal-backdrop">
+                    <div class="modal-content">
+                        <h3>Editar Mascota</h3>
+                        <form (ngSubmit)="actualizarMascota()">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" [(ngModel)]="mascotaEditando.nom_mascota"
+                                    name="nom_mascota" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Raza</label>
+                                <input type="text" class="form-control" [(ngModel)]="mascotaEditando.raza" name="raza"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Edad</label>
+                                <input type="number" class="form-control" [(ngModel)]="mascotaEditando.edad" name="edad"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Color</label>
+                                <input type="text" class="form-control" [(ngModel)]="mascotaEditando.color" name="color"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Propietario</label>
+                                <select class="form-select" [(ngModel)]="mascotaEditando.id_propietario"
+                                    name="id_propietario" required>
+                                    <option value="" disabled selected>Seleccione un propietario</option>
+                                    <option *ngFor="let p of propietarios" [value]="p.id_propietario">
+                                        {{ p.nombre }} {{ p.apellido_p }} {{ p.apellido_m }} - CI: {{ p.ci }}
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn me-2"
+                                style="background-color:#f39c12; color:white;">Actualizar</button>
+                            <button type="button" class="btn btn-secondary"
+                                (click)="cancelarEdicionMascota()">Cancelar</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CITAS -->
+        <section class="resume-section" id="citas">
+            <div class="resume-section-content">
+                <h2 class="mb-5 text-center" style="color:#d35400;">Registro de Citas</h2>
+
+                <!-- FORMULARIO ESTILIZADO -->
+                <div class="card shadow-sm mb-5" style="border-color:#e67e22;">
+                    <div class="card-header" style="background-color:#e67e22; color:white;">
+                        <h4 class="mb-0">Agregar Nueva Cita</h4>
+                    </div>
+                    <div class="card-body">
+                        <form #citaForm="ngForm" (ngSubmit)="crearCita(citaForm)">
+                            <!-- Mensaje de advertencia -->
+                            <div *ngIf="mostrarAdvertenciaCita" class="alert alert-warning mt-2">
+                                Todos los campos deben ser llenados
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Mascota</label>
+                                    <select class="form-select form-control-lg border-warning" required
+                                        [(ngModel)]="nuevaCita.id_mascota" name="id_mascota">
+                                        <option value="" disabled selected>Seleccione una mascota</option>
+                                        <option *ngFor="let m of mascotas" [value]="m.id_mascota">
+                                            {{ m.nom_mascota }} - Propietario: {{ m.nombrePropietario }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Fecha</label>
+                                    <input type="date" class="form-control form-control-lg border-warning" required
+                                        [(ngModel)]="nuevaCita.fecha" name="fecha">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Hora</label>
+                                    <input type="time" class="form-control form-control-lg border-warning" required
+                                        [(ngModel)]="nuevaCita.hora" name="hora">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Servicio</label>
+                                    <input type="text" class="form-control form-control-lg border-warning" required
+                                        [(ngModel)]="nuevaCita.servicio" name="servicio">
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn"
+                                    style="background-color:#d35400; color:white; font-weight:bold; width:200px;">
+                                    Registrar Cita
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+
+
+                <!-- TABLA DE CITAS -->
+                <!-- Tabla principal de todas las citas -->
+                <div class="table-responsive mb-4">
+                    
+                    <table class="table align-middle shadow-sm" style="border:2px solid #e67e22;">
+                        <thead style="background-color:#e67e22; color:white;">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Servicio</th>
+                                <th>Mascota</th>
+                                <th>Propietario</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let c of citas" style="background-color:#fdf2e9;">
+                                <td>{{ c.fecha }}</td>
+                                <td>{{ c.hora }}</td>
+                                <td>{{ c.servicio }}</td>
+                                <td>{{ c.nombreMascota }}</td>
+                                <td>{{ c.nombrePropietario }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm me-2" style="background-color:#f39c12; color:white;"
+                                        (click)="editarCita(c)">Editar</button>
+                                    <button class="btn btn-sm" style="background-color:#e74c3c; color:white;"
+                                        (click)="eliminarCita(c.id_cita)">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Filtro de búsqueda por fecha -->
+                <div class="mb-3 d-flex align-items-end gap-2">
+                    <div>
+                        <label for="fechaFiltro">Buscar citas por fecha:</label>
+                        <input type="date" id="fechaFiltro" [(ngModel)]="filtroFecha" class="form-control">
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-primary mt-4" (click)="aplicarFiltro()">Buscar</button>
+                        <button class="btn btn-sm btn-secondary mt-4" (click)="cancelarBusqueda()">Cancelar</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de resultados de búsqueda -->
+                <div *ngIf="citasFiltradas.length > 0" class="table-responsive">
+                    <h5>Resultados de búsqueda</h5>
+                    <table class="table align-middle shadow-sm" style="border:2px solid #3498db;">
+                        <thead style="background-color:#3498db; color:white;">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Servicio</th>
+                                <th>Mascota</th>
+                                <th>Propietario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let c of citasFiltradas" style="background-color:#ecf6fc;">
+                                <td>{{ c.fecha }}</td>
+                                <td>{{ c.hora }}</td>
+                                <td>{{ c.servicio }}</td>
+                                <td>{{ c.nombreMascota }}</td>
+                                <td>{{ c.nombrePropietario }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
+                <!-- Modal de edición de cita -->
+                <div *ngIf="citaEditando" class="modal-backdrop">
+                    <div class="modal-content">
+                        <h3>Editar Cita</h3>
+                        <form (ngSubmit)="actualizarCita()">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Mascota</label>
+                                <select class="form-select border-warning" [(ngModel)]="citaEditando.id_mascota"
+                                    name="id_mascota" required>
+                                    <option value="" disabled selected>Seleccione una mascota</option>
+                                    <option *ngFor="let m of mascotas" [value]="m.id_mascota">
+                                        {{ m.nom_mascota }} - Propietario: {{ m.nombrePropietario }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Fecha</label>
+                                <input type="date" class="form-control border-warning" [(ngModel)]="citaEditando.fecha"
+                                    name="fecha" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Hora</label>
+                                <input type="time" class="form-control border-warning" [(ngModel)]="citaEditando.hora"
+                                    name="hora" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Servicio</label>
+                                <input type="text" class="form-control border-warning"
+                                    [(ngModel)]="citaEditando.servicio" name="servicio" required>
+                            </div>
+
+                            <button type="submit" class="btn me-2"
+                                style="background-color:#f39c12; color:white;">Actualizar</button>
+                            <button type="button" class="btn btn-secondary"
+                                (click)="cancelarEdicionCita()">Cancelar</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+
+
+    </div>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+</body>
+<router-outlet></router-outlet>
